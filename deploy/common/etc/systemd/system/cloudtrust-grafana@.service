@@ -1,0 +1,12 @@
+[Unit]
+Description=Runs grafana container number %i
+After=docker.service
+
+[Service]
+Type=simple
+ExecStart=/bin/docker start -a grafana-%i
+ExecStop=/bin/docker stop grafana-%i
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
