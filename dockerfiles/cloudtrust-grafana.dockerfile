@@ -1,21 +1,20 @@
 FROM cloudtrust-baseimage:f27
 
+ARG config_env
+ARG config_git_tag
+ARG config_repo
 ARG grafana_service_git_tag
 
-WORKDIR /cloudtrust
 
-# Add Grafana repository
 RUN echo -e "[grafana]\nname=grafana\nbaseurl=https://packagecloud.io/grafana/stable/el/6/\$basearch\nrepo_gpgcheck=1\nenabled=1\ngpgcheck=1\ngpgkey=https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana\nsslverify=1\nsslcacert=/etc/pki/tls/certs/ca-bundle.crt" >> /etc/yum.repos.d/grafana.repo && \
-# Install which, grafana, monit, haproxy
     dnf -y install which && \
     dnf -y install grafana monit nginx haproxy && \
-    dnf clean all && \
-    git clone git@github.com:cloudtrust/grafana-service.git && \
-    cd grafana-service && \
-    git checkout ${grafana_service_git_tag}
+    dnf clean all
 
-# Configure and install
-RUN cd /cloudtrust/grafana-service && \
+WORKDIR /cloudtrust
+RUN git clone git@github.com:cloudtrust/grafana-service.git
+WORKDIR /cloudtrust/grafana-service
+RUN git checkout ${grafana_service_git_tag} && \
     chown grafana:grafana -R /var/log/grafana && \
     install -v -m0644 deploy/common/etc/security/limits.d/* /etc/security/limits.d/ && \
 # Install monit
@@ -37,11 +36,20 @@ RUN cd /cloudtrust/grafana-service && \
     install -v -m0744 -d /run/haproxy && \
     install -v -m0755 deploy/common/etc/haproxy/* /etc/haproxy && \
     install -v -o root -g root -m 644 -d /etc/systemd/system/haproxy.service.d && \
-    install -v -o root -g root -m 644 deploy/common/etc/systemd/system/haproxy.service.d/limit.conf /etc/systemd/system/haproxy.service.d/limit.conf && \
-# enable services
-    systemctl enable nginx.service && \
+    install -v -o root -g root -m 644 deploy/common/etc/systemd/system/haproxy.service.d/limit.conf /etc/systemd/system/haproxy.service.d/limit.conf
+
+WORKDIR /cloudtrust
+RUN git clone ${config_repo} ./config
+WORKDIR /cloudtrust/config
+RUN git checkout ${config_git_tag}
+
+RUN systemctl enable nginx.service && \
     systemctl enable grafana-server.service && \
     systemctl enable haproxy.service && \
     systemctl enable monit.service
 
 EXPOSE 80
+
+
+
+
