@@ -28,7 +28,7 @@ RUN git checkout ${grafana_service_git_tag} && \
     install -v -m0755 -d /etc/grafana && \
     install -v -m0744 -d /run/grafana && \
     install -v -o root -g root -m 644 -d /etc/systemd/system/grafana.service.d && \
-    install -v -o root -g root -m 644 deploy/etc/systemd/system/grafana.service.d/limit.conf /etc/systemd/system/grafana.service.d/limit.conf && \
+    install -v -o root -g root -m 644 deploy/etc/systemd/system/grafana.service.d/limit.conf /etc/systemd/system/grafana.service.d/limit.conf
 
 WORKDIR /cloudtrust
 RUN git clone ${config_repo} ./config
