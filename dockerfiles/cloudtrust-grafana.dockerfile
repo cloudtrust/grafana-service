@@ -5,7 +5,9 @@ ARG config_repo
 ARG grafana_service_git_tag
 
 
-RUN echo -e "[grafana]\nname=grafana\nbaseurl=https://packagecloud.io/grafana/stable/el/6/\$basearch\nrepo_gpgcheck=1\nenabled=1\ngpgcheck=1\ngpgkey=https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana\nsslverify=1\nsslcacert=/etc/pki/tls/certs/ca-bundle.crt" >> /etc/yum.repos.d/grafana.repo && \
+RUN echo -e "[grafana]\nname=grafana\nbaseurl=https://packagecloud.io/grafana/stable/el/6/\$basearch\nrepo_gpgcheck=1\nenabled=1\ngpgcheck=1\ngpgkey=https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana\nsslverify=1\nsslcacert=/etc/pki/tls/certs/ca-bundle.crt" >> /etc/yum.repos.d/grafana.repo
+
+RUN dnf update -y && \    
     dnf -y install which && \
     dnf -y install grafana monit nginx && \
     dnf clean all
