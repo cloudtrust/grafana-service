@@ -4,12 +4,13 @@ ARG config_git_tag
 ARG config_repo
 ARG grafana_service_git_tag
 
+ARG grafana_version=5.2.4-1
+ARG nginx_version=1.12.1-1.fc27
 
 RUN echo -e "[grafana]\nname=grafana\nbaseurl=https://packagecloud.io/grafana/stable/el/6/\$basearch\nrepo_gpgcheck=1\nenabled=1\ngpgcheck=1\ngpgkey=https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana\nsslverify=1\nsslcacert=/etc/pki/tls/certs/ca-bundle.crt" >> /etc/yum.repos.d/grafana.repo
 
 RUN dnf update -y && \    
-    dnf -y install which && \
-    dnf -y install grafana monit nginx && \
+    dnf -y install grafana-$grafana_version nginx-$nginx_version && \
     dnf clean all
 
 WORKDIR /cloudtrust
