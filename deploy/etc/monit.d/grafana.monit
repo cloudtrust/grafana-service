@@ -1,0 +1,4 @@
+check process grafana-server with pidfile /var/run/grafana/grafana-server.pid
+  start program = "/usr/bin/systemctl start grafana-server.service"
+  stop program = "/usr/bin/systemctl stop grafana-server.service"
+  if failed port 3000 protocol HTTP request / with timeout 10 seconds then restart
